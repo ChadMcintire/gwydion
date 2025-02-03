@@ -1,0 +1,17 @@
+numpy>=2.0.2
+matplotlib>=3.10.0
+pandas>=2.2.3
+gym>=0.26.2
+torch>=2.5.1
+setuptools>=75.8.0
+kubernetes>=25.3.0
+wheel>=0.37.1
+requests>=2.32.3
+statsmodels>=0.14.4
+scikit-learn>=1.6.1
+keras>=3.8.0
+joblib>=1.4.2
+stable_baselines3
+tensorboard
+sb3-contrib
+shimmy

@@ -17,15 +17,28 @@ from policies.util.util import test_model
 logging.basicConfig(filename='run.log', filemode='w', level=logging.INFO)
 logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 
+def str_to_bool(value):
+    if isinstance(value, bool):
+        return value
+    if value.lower() in {'true', 'yes', '1'}:
+        return True
+    elif value.lower() in {'false', 'no', '0'}:
+        return False
+    else:
+        raise argparse.ArgumentTypeError(f"Invalid boolean value: '{value}'")
+
 parser = argparse.ArgumentParser(description='Run ILP!')
 parser.add_argument('--alg', default='recurrent_ppo', help='The algorithm: ["ppo", "recurrent_ppo", "a2c"]')
-parser.add_argument('--k8s', default=False, action="store_true", help='K8s mode')
+parser.add_argument('--k8s', type=str_to_bool, default=False, help='K8s mode')
+
+parser.add_argument('--True', default=True, action="store_true", help='Training mode')
+
 parser.add_argument('--use_case', default='onlineboutique', help='Apps: ["redis", "onlineboutique"]')
 parser.add_argument('--goal', default='latency', help='Reward Goal: ["cost", "latency"]')
 
-parser.add_argument('--training', default=True, action="store_true", help='Training mode')
-parser.add_argument('--testing', default=False, action="store_true", help='Testing mode')
-parser.add_argument('--loading', default=False, action="store_true", help='Loading mode')
+parser.add_argument('--training', type=str_to_bool, default=False, help='Training mode')
+parser.add_argument('--testing', type=str_to_bool, default=False, help='Testing mode')
+parser.add_argument('--loading', type=str_to_bool, default=False, help='Loading mode')
 parser.add_argument('--load_path',
                     default='logs/a2c_env_onlineboutique_goal_cost_k8s_False_totalSteps_500000/a2c_env_redis_goal_cost_k8s_False_totalSteps_500000.zip',
                     help='Loading path, ex: logs/model/test.zip')
@@ -108,6 +121,7 @@ def main():
     training = args.training
     testing = args.testing
     test_path = args.test_path
+    print("In main first args:\n\n args in order", alg, k8s, use_case, goal, loading, load_path, training, testing, test_path) 
 
     steps = int(args.steps)
     total_steps = int(args.total_steps)
