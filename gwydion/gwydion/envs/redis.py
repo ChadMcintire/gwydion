@@ -4,11 +4,11 @@ import logging
 import time
 from statistics import mean
 
-import gym
+import gymnasium
 import numpy as np
 import pandas as pd
-from gym import spaces
-from gym.utils import seeding
+from gymnasium import spaces
+from gymnasium.utils import seeding
 from datetime import datetime
 
 from gwydion.envs.deployment import get_max_cpu, get_max_mem, get_max_traffic, get_redis_deployment_list
@@ -58,7 +58,7 @@ LATENCY = 'latency'
 COST = 'cost'
 
 
-class Redis(gym.Env):
+class Redis(gymnasium.Env):
     """Horizontal Scaling for Redis in Kubernetes - an OpenAI gym environment"""
     metadata = {'render.modes': ['human', 'ansi', 'array']}
 
