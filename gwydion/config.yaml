@@ -1,0 +1,40 @@
+# config.yaml
+alg: "recurrent_ppo"   # The algorithm: ["ppo", "recurrent_ppo", "a2c"]
+k8s: false             # K8s mode
+
+use_case: "onlineboutique"   # Apps: ["redis", "onlineboutique"]
+goal: "latency"        # Reward Goal: ["cost", "latency"]
+
+training: false        # Training mode
+testing: false         # Testing mode
+loading: false         # Loading mode
+
+load_path: "logs/a2c_env_onlineboutique_goal_cost_k8s_False_totalSteps_500000/a2c_env_redis_goal_cost_k8s_False_totalSteps_500000.zip"
+test_path: "logs/a2c_env_onlineboutique_goal_latency_k8s_False_totalSteps_500000/a2c_env_onlineboutique_goal_latency_k8s_False_totalSteps_500000.zip"
+
+steps: 50000           # The steps for saving.
+total_steps: 250000    # The total number of steps.
+
+MOVES: 
+  - "None"
+  - "Add-1"
+  - "Add-2"
+  - "Add-3"
+  - "Add-4"
+  - "Add-5"
+  - "Add-6"
+  - "Add-7"
+  - "Stop-1"
+  - "Stop-2"
+  - "Stop-3"
+  - "Stop-4"
+  - "Stop-5"
+  - "Stop-6"
+  - "Stop-7"
+
+MAX_STEPS: 25
+MIN_REPLICATION: 1
+MAX_REPLICATION: 8
+LATENCY: "latency"
+COST: "cost"
+
