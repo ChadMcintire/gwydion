@@ -5,7 +5,7 @@ k8s: false             # K8s mode
 use_case: "onlineboutique"   # Apps: ["redis", "onlineboutique"]
 goal: "latency"        # Reward Goal: ["cost", "latency"]
 
-training: false        # Training mode
+training: true # Training mode
 testing: false         # Testing mode
 loading: false         # Loading mode
 

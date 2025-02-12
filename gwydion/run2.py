@@ -53,16 +53,14 @@ def run(cfg: DictConfig):
             model.set_env(env)
             model.learn(total_timesteps=cfgtotal_steps, tb_log_name=name + "_run", callback=checkpoint_callback)
         else:
-            model = get_model(alg, env, tensorboard_log)
-            model.learn(total_timesteps=total_steps, tb_log_name=name + "_run", callback=checkpoint_callback)
+            model = get_model(cfg.alg, env, tensorboard_log)
+            model.learn(total_timesteps=cfg.total_steps, tb_log_name=name + "_run", callback=checkpoint_callback)
 
         model.save(name)
 
     if cfg.testing:
-        model = get_load_model(alg, tensorboard_log, test_path)
+        model = get_load_model(cfg.alg, tensorboard_log, test_path)
         test_model(model, env, n_episodes=100, n_steps=110, smoothing_window=5, fig_name=name + "_check2.png")
-
-
 
 
 

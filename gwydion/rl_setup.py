@@ -1,5 +1,9 @@
 from gwydion.envs import Redis, OnlineBoutique
 from stable_baselines3.common.vec_env import SubprocVecEnv, VecMonitor
+from stable_baselines3 import PPO
+from stable_baselines3 import A2C
+from sb3_contrib import RecurrentPPO, MaskablePPO
+
 
 def get_model(alg, env, tensorboard_log):
     model = 0
@@ -46,7 +50,7 @@ def get_env(use_case, k8s, goal):
         # otherwise just comment the following lines
 
         env.reset()
-        _, _, _, info = env.step([0, 0])
+        _, _, _, _, info = env.step([0, 0])
         info_keywords = tuple(info.keys())
         env = SubprocVecEnv([lambda: OnlineBoutique(k8s=k8s, goal_reward=goal) for i in range(8)])
         envs = VecMonitor(env, filename="vec_onlineboutique_gym_results_", info_keywords=info_keywords)

@@ -17,6 +17,8 @@ from gwydion.envs.deployment import get_max_cpu, get_max_mem, get_max_traffic, \
 from gwydion.envs.util import save_to_csv, get_num_pods, get_cost_reward, \
     get_latency_reward_online_boutique
 
+from stable_baselines3.common.vec_env import SubprocVecEnv, VecMonitor
+
 # MIN and MAX Replication
 MIN_REPLICATION = 1
 MAX_REPLICATION = 8
@@ -84,7 +86,7 @@ class OnlineBoutique(gymnasium.Env):
         self.k8s = k8s
         self.name = "online_boutique_gym"
         self.__version__ = "0.0.1"
-        self.seed()
+        self.np_random=None
         self.goal_reward = goal_reward
         self.waiting_period = waiting_period  # seconds to wait after action
 
@@ -236,7 +238,10 @@ class OnlineBoutique(gymnasium.Env):
         logging.info('[Step {}] | Action (Deployment): {} | Action (Move): {} | Reward: {} | Total Reward: {}'.format(
             self.current_step, DEPLOYMENTS[action[0]], MOVES[action[1]], reward, self.total_reward))
 
-        ob = self.get_state()
+        ob = np.array(self.get_state(), dtype=np.float32)
+        done = self.current_step >= MAX_STEPS
+        truncated = False
+
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         # self.save_obs_to_csv(self.obs_csv, np.array(ob), date, self.deploymentList[0].latency)
 
@@ -263,13 +268,17 @@ class OnlineBoutique(gymnasium.Env):
                         self.total_reward, self.execution_time)
 
         # return ob, reward, self.episode_over, self.info
-        return np.array(ob), reward, self.episode_over, self.info
+        return ob, reward, self.episode_over, truncated, self.info
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def reset(self):
+    def reset(self,seed=None, options=None):
+        super().reset(seed=seed)
+
+        if seed is not None:
+            self.seed(seed)
         """
         Reset the state of the environment and returns an initial observation.
         Returns
@@ -288,7 +297,14 @@ class OnlineBoutique(gymnasium.Env):
         # Deployment Data
         self.deploymentList = get_online_boutique_deployment_list(self.k8s, self.min_pods, self.max_pods)
 
-        return np.array(self.get_state())
+        observation = np.array(self.get_state(), dtype=np.float32)
+
+        info = {}
+          # Stable-Baselines3 Compatibility Fix: Only return `observation` inside `SubprocVecEnv`
+        if isinstance(self, gymnasium.vector.SyncVectorEnv) or isinstance(self, SubprocVecEnv):
+            return observation  # SB3 expects only `observation`
+
+        return observation, info
 
     def render(self, mode='human', close=False):
         # Render the environment to the screen
